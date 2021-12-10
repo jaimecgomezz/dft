@@ -14,26 +14,20 @@ isn't working yet
 
 usage
 --------------------------------------------------------------------------------
-dft
-  [options]
-  [--in=<filename>]  [--iformat=<format>]
-  [--out=<filename>] [--oformat=<format>]
-  [--verbose=<level>]
+dft [FLAGS] [OPTIONS]
 
-options:
-  -U                  Evaluate the instructions in reverse to undo the result
-  --in=<filename>     File to consume as input, if not present defaults to stdin
-  --iformat=<format>  Overwrites the format assumed by the in filename extension,
-                      required when reading from stdin
-                        - json
-                        - csv
-  --out=<filename>    File to write as output, if not present defaults to stdout
-  --oformat=<format>  Overwrites the format assumed by the out filename
-                      extension, required when writing to stdout
-                        - json
-                        - csv
-                        - sql
-  --verbose=<level>   Level of verbosity, from 0 to 5
+FLAGS:
+    -h, --help       Prints help information
+    -u, --undo       Reverse evaluate
+    -V, --version    Prints version information
+    -v, --verbose    Verbose mode (-v, -vv, -vvv, ...)
+
+OPTIONS:
+    -f, --from <from>                    Input format, see availables
+    -i, --input <input>                  Input file, defaults to stding
+    -z, --instructions <instructions>    Instructions file [default: instructions.dft]
+    -o, --output <output>                Output file, defaults to stdout
+    -t, --to <to>                        Output format, see availables
 
 
 concepts
@@ -52,14 +46,15 @@ op:
 
 expression:
   comparison operation
-    - EQUAL
+    - EQUALS
     - GREATER
+    - EQGREATER
     - LESSER
-    - DIFFERENT
+    - EQLESSER
+    - DIFFERS
 
 type:
   attribute data type
-    - number
     - integer
     - float
     - boolean
@@ -74,13 +69,53 @@ type:
 
 syntax
 --------------------------------------------------------------------------------
-DISTINCT  <field>
+DISTINCT  <field[,field...]>
 IGNORE    <field[,field...]>
-FILTER    <expression>                <value>
-DEFINE    <formula>                   AS      <op>
-ALIAS     <field>                     AS      <field>
-RENAME    <field>                     TO      <field>
-APPLY     <op[,op...]>                TO      <field>
-MERGE     <field[,field...]>          AS      <field>
-COERCE    <field[,field...]>          TYPED   <type>        RESCUE    <value>
-ADD       <field[,field...]>          TYPED   <type>        [DEFAULT   <field>]
+ALIAS     <field>               TO        <field>
+RENAME    <field>               TO        <field>
+MERGE     <field[,field...]>    TO        <field>
+FILTER    <field[,field...]>    THAT      <expression>    <value>
+COERCE    <field[,field...]>    TYPED     <type>          RESCUE    <value>
+ADD       <field[,field...]>    TYPED     <type>          DEFAULT   <value>
+
+
+instructions
+--------------------------------------------------------------------------------
+DISTINCT:
+  filters out records with same value on <field>
+
+IGNORE:
+  filters out the <field> itself
+  this operation makes the result undoable
+
+FILTER:
+  filters out records that fail to match its value against <value>
+
+ALIAS:
+  aliases a given <field> to also be refered as <field>, useful in conjuction
+  with APPLY
+
+RENAME:
+  changes the current <field> name to <field>
+
+COERCE:
+  parses <field> into the specified <type> and rescues failure with <value>
+
+ADD:
+  adds <field> to records with <type> and defaults to <value>
+
+
+wishlits
+--------------------------------------------------------------------------------
+
+DEFINE
+----------
+  defines custom <formula> as <op> the be applied to data with <type>
+
+  DEFINE    <formula>             AS        <op>            FOR       <type>
+
+APPLY
+----------
+  evaluates <field> with <op> and rescues failure with <value>
+
+  APPLY     <op[,op...]>          TO        <field>         RESCUE    <value>
