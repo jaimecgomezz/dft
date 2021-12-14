@@ -4,8 +4,8 @@ use std::io::Write;
 
 use crate::adapters::input;
 use crate::adapters::output;
-use crate::definitions::traits::FromAdapter;
-use crate::definitions::traits::ToAdapter;
+use crate::definitions::traits::InputAdapter;
+use crate::definitions::traits::OutputAdapter;
 use crate::definitions::types::{
     Executables, Fields, InputFormat, Logs, OutputFormat, OutputWriter, Records,
 };

@@ -1,12 +1,12 @@
 use csv::Writer;
 use std::error::Error;
 
-use crate::definitions::traits::ToAdapter;
+use crate::definitions::traits::OutputAdapter;
 use crate::definitions::types::{Fields, OutputWriter, Records};
 
 pub struct Adapter;
 
-impl ToAdapter for Adapter {
+impl OutputAdapter for Adapter {
     fn write(
         &self,
         writer: OutputWriter,

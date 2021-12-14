@@ -1,12 +1,12 @@
 use csv::Reader;
 use std::error::Error;
 
-use crate::definitions::traits::FromAdapter;
+use crate::definitions::traits::InputAdapter;
 use crate::definitions::types::{Field, Fields, InputReader, Record, Records, Values};
 
 pub struct Adapter;
 
-impl FromAdapter for Adapter {
+impl InputAdapter for Adapter {
     fn read(&self, reader: InputReader) -> Result<(Fields, Records), Box<dyn Error>> {
         let mut result: Records = vec![];
 
