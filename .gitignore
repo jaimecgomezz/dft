@@ -13,6 +13,7 @@ tags
 input.*
 instructions.dft
 output.*
+logs
 
 
 # Added by cargo
