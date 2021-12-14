@@ -16,8 +16,12 @@ pub trait OutputAdapter {
     ) -> Result<usize, Box<dyn Error>>;
 }
 
-pub trait Execute: fmt::Display + fmt::Debug {
+pub trait Executable: fmt::Display + fmt::Debug {
     fn execute(&self) -> Result<String, Box<dyn Error>> {
         Ok(format!("Executing: {:?}", self))
     }
+}
+
+pub trait Buildable {
+    fn from_tokens(tokens: Vec<&str>, line: &usize) -> Result<Box<dyn Executable>, Box<dyn Error>>;
 }

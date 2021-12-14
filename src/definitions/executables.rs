@@ -1,22 +1,24 @@
+use std::error::Error;
 use std::fmt;
 
-use crate::definitions::traits::Execute;
-use crate::instructions::utils::{parse_token, parse_token_list};
+use crate::definitions::enums::{Actions, Connector, Expressions, Formats, Types};
+use crate::definitions::traits::{Buildable, Executable};
+use crate::instructions::utils::*;
 
 #[derive(Debug)]
 pub struct Distinct {
     fields: Vec<String>,
 }
 
-impl Distinct {
-    pub fn from_tokens(tokens: Vec<&str>) -> Option<Box<dyn Execute>> {
-        let fields = parse_token_list(tokens.get(1));
+impl Buildable for Distinct {
+    fn from_tokens(tokens: Vec<&str>, line: &usize) -> Result<Box<dyn Executable>, Box<dyn Error>> {
+        let fields = parse_fields(tokens.get(1), line)?;
 
-        Some(Box::new(Distinct { fields }))
+        Ok(Box::new(Distinct { fields }))
     }
 }
 
-impl Execute for Distinct {}
+impl Executable for Distinct {}
 
 impl fmt::Display for Distinct {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -29,15 +31,15 @@ pub struct Ignore {
     fields: Vec<String>,
 }
 
-impl Ignore {
-    pub fn from_tokens(tokens: Vec<&str>) -> Option<Box<dyn Execute>> {
-        let fields = parse_token_list(tokens.get(1));
+impl Buildable for Ignore {
+    fn from_tokens(tokens: Vec<&str>, line: &usize) -> Result<Box<dyn Executable>, Box<dyn Error>> {
+        let fields = parse_fields(tokens.get(1), line)?;
 
-        Some(Box::new(Ignore { fields }))
+        Ok(Box::new(Ignore { fields }))
     }
 }
 
-impl Execute for Ignore {}
+impl Executable for Ignore {}
 
 impl fmt::Display for Ignore {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -51,16 +53,17 @@ pub struct Alias {
     field: String,
 }
 
-impl Alias {
-    pub fn from_tokens(tokens: Vec<&str>) -> Option<Box<dyn Execute>> {
-        let to = parse_token(tokens.get(3));
-        let field = parse_token(tokens.get(1));
+impl Buildable for Alias {
+    fn from_tokens(tokens: Vec<&str>, line: &usize) -> Result<Box<dyn Executable>, Box<dyn Error>> {
+        let field = parse_field(tokens.get(1), line)?;
+        validate_connector(tokens.get(2), Connector::TO, line)?;
+        let to = parse_field(tokens.get(3), line)?;
 
-        Some(Box::new(Alias { to, field }))
+        Ok(Box::new(Alias { to, field }))
     }
 }
 
-impl Execute for Alias {}
+impl Executable for Alias {}
 
 impl fmt::Display for Alias {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -74,16 +77,17 @@ pub struct Rename {
     field: String,
 }
 
-impl Rename {
-    pub fn from_tokens(tokens: Vec<&str>) -> Option<Box<dyn Execute>> {
-        let to = parse_token(tokens.get(3));
-        let field = parse_token(tokens.get(1));
+impl Buildable for Rename {
+    fn from_tokens(tokens: Vec<&str>, line: &usize) -> Result<Box<dyn Executable>, Box<dyn Error>> {
+        let field = parse_field(tokens.get(1), line)?;
+        validate_connector(tokens.get(2), Connector::TO, line)?;
+        let to = parse_field(tokens.get(3), line)?;
 
-        Some(Box::new(Rename { to, field }))
+        Ok(Box::new(Rename { to, field }))
     }
 }
 
-impl Execute for Rename {}
+impl Executable for Rename {}
 
 impl fmt::Display for Rename {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -97,16 +101,17 @@ pub struct Merge {
     fields: Vec<String>,
 }
 
-impl Merge {
-    pub fn from_tokens(tokens: Vec<&str>) -> Option<Box<dyn Execute>> {
-        let to = parse_token(tokens.get(3));
-        let fields = parse_token_list(tokens.get(1));
+impl Buildable for Merge {
+    fn from_tokens(tokens: Vec<&str>, line: &usize) -> Result<Box<dyn Executable>, Box<dyn Error>> {
+        let fields = parse_fields(tokens.get(1), line)?;
+        validate_connector(tokens.get(2), Connector::TO, line)?;
+        let to = parse_field(tokens.get(3), line)?;
 
-        Some(Box::new(Merge { to, fields }))
+        Ok(Box::new(Merge { to, fields }))
     }
 }
 
-impl Execute for Merge {}
+impl Executable for Merge {}
 
 impl fmt::Display for Merge {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -117,17 +122,18 @@ impl fmt::Display for Merge {
 #[derive(Debug)]
 pub struct Filter {
     fields: Vec<String>,
-    expression: String,
+    expression: Expressions,
     value: String,
 }
 
-impl Filter {
-    pub fn from_tokens(tokens: Vec<&str>) -> Option<Box<dyn Execute>> {
-        let value = parse_token(tokens.get(4));
-        let expression = parse_token(tokens.get(3));
-        let fields = parse_token_list(tokens.get(1));
+impl Buildable for Filter {
+    fn from_tokens(tokens: Vec<&str>, line: &usize) -> Result<Box<dyn Executable>, Box<dyn Error>> {
+        let fields = parse_fields(tokens.get(1), line)?;
+        validate_connector(tokens.get(2), Connector::MATCHING, line)?;
+        let expression = parse_expression(tokens.get(3), line)?;
+        let value = parse_value(tokens.get(4), line)?;
 
-        Some(Box::new(Filter {
+        Ok(Box::new(Filter {
             fields,
             value,
             expression,
@@ -135,7 +141,7 @@ impl Filter {
     }
 }
 
-impl Execute for Filter {}
+impl Executable for Filter {}
 
 impl fmt::Display for Filter {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -144,19 +150,52 @@ impl fmt::Display for Filter {
 }
 
 #[derive(Debug)]
+pub struct Validate {
+    field: String,
+    format: Formats,
+    action: Actions,
+}
+
+impl Buildable for Validate {
+    fn from_tokens(tokens: Vec<&str>, line: &usize) -> Result<Box<dyn Executable>, Box<dyn Error>> {
+        let field = parse_field(tokens.get(1), line)?;
+        validate_connector(tokens.get(2), Connector::MATCHING, line)?;
+        let format = parse_format(tokens.get(3), line)?;
+        validate_connector(tokens.get(4), Connector::OR, line)?;
+        let action = parse_action(tokens.get(5), line)?;
+
+        Ok(Box::new(Validate {
+            field,
+            format,
+            action,
+        }))
+    }
+}
+
+impl Executable for Validate {}
+
+impl fmt::Display for Validate {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self)
+    }
+}
+
+#[derive(Debug)]
 pub struct Coerce {
     fields: Vec<String>,
-    typed: String,
+    typed: Types,
     rescue: String,
 }
 
-impl Coerce {
-    pub fn from_tokens(tokens: Vec<&str>) -> Option<Box<dyn Execute>> {
-        let rescue = parse_token(tokens.get(5));
-        let typed = parse_token(tokens.get(3));
-        let fields = parse_token_list(tokens.get(1));
+impl Buildable for Coerce {
+    fn from_tokens(tokens: Vec<&str>, line: &usize) -> Result<Box<dyn Executable>, Box<dyn Error>> {
+        let fields = parse_fields(tokens.get(1), line)?;
+        validate_connector(tokens.get(2), Connector::TYPED, line)?;
+        let typed = parse_typed(tokens.get(3), line)?;
+        validate_connector(tokens.get(4), Connector::RESCUE, line)?;
+        let rescue = parse_field(tokens.get(5), line)?;
 
-        Some(Box::new(Coerce {
+        Ok(Box::new(Coerce {
             fields,
             typed,
             rescue,
@@ -164,7 +203,7 @@ impl Coerce {
     }
 }
 
-impl Execute for Coerce {}
+impl Executable for Coerce {}
 
 impl fmt::Display for Coerce {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -175,17 +214,19 @@ impl fmt::Display for Coerce {
 #[derive(Debug)]
 pub struct Add {
     fields: Vec<String>,
-    typed: String,
+    typed: Types,
     default: String,
 }
 
-impl Add {
-    pub fn from_tokens(tokens: Vec<&str>) -> Option<Box<dyn Execute>> {
-        let default = parse_token(tokens.get(5));
-        let typed = parse_token(tokens.get(3));
-        let fields = parse_token_list(tokens.get(1));
+impl Buildable for Add {
+    fn from_tokens(tokens: Vec<&str>, line: &usize) -> Result<Box<dyn Executable>, Box<dyn Error>> {
+        let fields = parse_fields(tokens.get(1), line)?;
+        validate_connector(tokens.get(2), Connector::TYPED, line)?;
+        let typed = parse_typed(tokens.get(3), line)?;
+        validate_connector(tokens.get(4), Connector::DEFAULT, line)?;
+        let default = parse_value(tokens.get(5), line)?;
 
-        Some(Box::new(Add {
+        Ok(Box::new(Add {
             fields,
             typed,
             default,
@@ -193,7 +234,7 @@ impl Add {
     }
 }
 
-impl Execute for Add {}
+impl Executable for Add {}
 
 impl fmt::Display for Add {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {

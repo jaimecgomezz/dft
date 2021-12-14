@@ -14,7 +14,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut process = Process::new();
 
     // TODO: error handling
-    process.read_executables(cli.instructor()?)?;
+    process.read_instructions(cli.instructor()?)?;
     process.read_records(cli.reader()?, cli.iformat()?)?;
     process.run()?;
     process.log(cli.logger()?)?;

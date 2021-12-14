@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 use std::io::{BufRead, Write};
 
-use crate::definitions::traits::Execute;
+use crate::definitions::traits::Executable;
 
 #[derive(Debug)]
 pub struct Field {
@@ -39,20 +39,10 @@ pub type Values = Vec<String>;
 pub type Fields = Vec<Field>;
 pub type Records = Vec<Record>;
 
-pub type Executable = Box<dyn Execute>;
-pub type Executables = Vec<Executable>;
+pub type Instruction = Box<dyn Executable>;
+pub type Instructions = Vec<Instruction>;
 
 pub type Logs = Vec<String>;
 
 pub type OutputWriter = Box<dyn Write>;
 pub type InputReader = Box<dyn BufRead>;
-
-#[derive(Debug)]
-pub enum InputFormat {
-    CSV,
-}
-
-#[derive(Debug)]
-pub enum OutputFormat {
-    CSV,
-}

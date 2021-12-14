@@ -1,4 +1,4 @@
-use crate::definitions::types::{InputFormat, OutputFormat};
+use crate::definitions::enums::{InputFormat, OutputFormat};
 use std::env::current_dir;
 use std::error::Error;
 use std::fs::{File, OpenOptions};

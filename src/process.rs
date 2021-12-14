@@ -4,17 +4,14 @@ use std::io::Write;
 
 use crate::adapters::input;
 use crate::adapters::output;
-use crate::definitions::traits::InputAdapter;
-use crate::definitions::traits::OutputAdapter;
-use crate::definitions::types::{
-    Executables, Fields, InputFormat, Logs, OutputFormat, OutputWriter, Records,
-};
+use crate::definitions::enums::{InputFormat, OutputFormat};
+use crate::definitions::traits::{InputAdapter, OutputAdapter};
+use crate::definitions::types::{Fields, Instructions, Logs, OutputWriter, Records};
 use crate::instructions::parser::InstructionParser;
 
 #[derive(Debug)]
 pub struct Process {
-    pub finished: bool,
-    pub executables: Executables,
+    pub instructions: Instructions,
     pub records: Records,
     pub fields: Fields,
     pub logs: Logs,
@@ -23,18 +20,17 @@ pub struct Process {
 impl Process {
     pub fn new() -> Self {
         Process {
-            finished: false,
             logs: vec![],
             fields: vec![],
             records: vec![],
-            executables: vec![],
+            instructions: vec![],
         }
     }
 
-    pub fn read_executables(&mut self, reader: Box<dyn BufRead>) -> Result<usize, Box<dyn Error>> {
+    pub fn read_instructions(&mut self, reader: Box<dyn BufRead>) -> Result<usize, Box<dyn Error>> {
         let mut executables = InstructionParser::parse(reader)?;
 
-        self.executables.append(&mut executables);
+        self.instructions.append(&mut executables);
 
         Ok(executables.len())
     }
@@ -57,7 +53,7 @@ impl Process {
     }
 
     pub fn run(&mut self) -> Result<usize, Box<dyn Error>> {
-        for executable in &self.executables {
+        for executable in &self.instructions {
             self.logs.push(executable.execute()?);
         }
 
@@ -81,8 +77,9 @@ impl Process {
         writer: Box<dyn Write>,
         format: OutputFormat,
     ) -> Result<usize, Box<dyn Error>> {
-        let adapter = match format {
-            OutputFormat::CSV => output::csv::Adapter,
+        let adapter: Box<dyn OutputAdapter> = match format {
+            OutputFormat::CSV => Box::new(output::csv::Adapter),
+            OutputFormat::JSON => Box::new(output::json::Adapter),
         };
 
         Ok(adapter.write(writer, &self.fields, &self.records)?)
