@@ -10,14 +10,14 @@ pub enum OutputFormat {
 }
 
 #[derive(Debug)]
-pub enum Types {
+pub enum Type {
     NUMBER,
     BOOLEAN,
     STRING,
 }
 
 #[derive(Debug)]
-pub enum Expressions {
+pub enum Expression {
     EQUALS,
     GREATER,
     EQGREATER,
@@ -27,7 +27,7 @@ pub enum Expressions {
 }
 
 #[derive(Debug)]
-pub enum Formats {
+pub enum Format {
     DATE,
     TIME,
     DATETIME,
@@ -37,7 +37,7 @@ pub enum Formats {
 }
 
 #[derive(Debug)]
-pub enum Actions {
+pub enum Action {
     DISCARD,
     NOTIFY,
     HALT,

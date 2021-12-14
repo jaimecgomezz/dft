@@ -1,55 +1,55 @@
 use std::error::Error;
 
-use crate::definitions::enums::{Actions, Connector, Expressions, Formats, Types};
+use crate::definitions::enums::{Action, Connector, Expression, Format, Type};
 
-pub fn parse_typed(slice: Option<&&str>, line: &usize) -> Result<Types, Box<dyn Error>> {
+pub fn parse_typed(slice: Option<&&str>, line: &usize) -> Result<Type, Box<dyn Error>> {
     match slice {
         Some(s) => match *s {
-            "number" => Ok(Types::NUMBER),
-            "boolean" => Ok(Types::BOOLEAN),
-            "string" => Ok(Types::STRING),
+            "number" => Ok(Type::NUMBER),
+            "boolean" => Ok(Type::BOOLEAN),
+            "string" => Ok(Type::STRING),
             _ => panic!("Invalid <type> on line {}", line),
         },
         None => panic!("Missing <type> on line {}", line),
     }
 }
 
-pub fn parse_expression(slice: Option<&&str>, line: &usize) -> Result<Expressions, Box<dyn Error>> {
+pub fn parse_expression(slice: Option<&&str>, line: &usize) -> Result<Expression, Box<dyn Error>> {
     match slice {
         Some(s) => match *s {
-            "equals" => Ok(Expressions::EQUALS),
-            "greater" => Ok(Expressions::GREATER),
-            "eqgreater" => Ok(Expressions::EQGREATER),
-            "lesser" => Ok(Expressions::LESSER),
-            "eqlesser" => Ok(Expressions::EQLESSER),
-            "differs" => Ok(Expressions::DIFFERS),
+            "equals" => Ok(Expression::EQUALS),
+            "greater" => Ok(Expression::GREATER),
+            "eqgreater" => Ok(Expression::EQGREATER),
+            "lesser" => Ok(Expression::LESSER),
+            "eqlesser" => Ok(Expression::EQLESSER),
+            "differs" => Ok(Expression::DIFFERS),
             _ => panic!("Invalid <expression> on line {}", line),
         },
         None => panic!("Missing <expression> on line {}", line),
     }
 }
 
-pub fn parse_format(slice: Option<&&str>, line: &usize) -> Result<Formats, Box<dyn Error>> {
+pub fn parse_format(slice: Option<&&str>, line: &usize) -> Result<Format, Box<dyn Error>> {
     match slice {
         Some(s) => match *s {
-            "date" => Ok(Formats::DATE),
-            "time" => Ok(Formats::TIME),
-            "datetime" => Ok(Formats::DATETIME),
-            "uri" => Ok(Formats::URI),
-            "email" => Ok(Formats::EMAIL),
-            "uuid" => Ok(Formats::UUID),
+            "date" => Ok(Format::DATE),
+            "time" => Ok(Format::TIME),
+            "datetime" => Ok(Format::DATETIME),
+            "uri" => Ok(Format::URI),
+            "email" => Ok(Format::EMAIL),
+            "uuid" => Ok(Format::UUID),
             _ => panic!("Invalid <format> on line {}", line),
         },
         None => panic!("Missing <format> on line {}", line),
     }
 }
 
-pub fn parse_action(slice: Option<&&str>, line: &usize) -> Result<Actions, Box<dyn Error>> {
+pub fn parse_action(slice: Option<&&str>, line: &usize) -> Result<Action, Box<dyn Error>> {
     match slice {
         Some(s) => match *s {
-            "discard" => Ok(Actions::DISCARD),
-            "notify" => Ok(Actions::NOTIFY),
-            "halt" => Ok(Actions::HALT),
+            "discard" => Ok(Action::DISCARD),
+            "notify" => Ok(Action::NOTIFY),
+            "halt" => Ok(Action::HALT),
             _ => panic!("Invalid <action> on line {}", line),
         },
         None => panic!("Missing <action> on line {}", line),

@@ -68,7 +68,7 @@ type:
     - boolean
     - string
 
-formats:
+format:
   string value format
     - date
     - time
@@ -77,7 +77,7 @@ formats:
     - email
     - uuid
 
-actions:
+action:
   reaction to an event
     - discard
     - notify

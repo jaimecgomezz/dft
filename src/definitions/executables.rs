@@ -1,7 +1,7 @@
 use std::error::Error;
 use std::fmt;
 
-use crate::definitions::enums::{Actions, Connector, Expressions, Formats, Types};
+use crate::definitions::enums::{Action, Connector, Expression, Format, Type};
 use crate::definitions::traits::{Buildable, Executable};
 use crate::instructions::utils::*;
 
@@ -122,7 +122,7 @@ impl fmt::Display for Merge {
 #[derive(Debug)]
 pub struct Filter {
     fields: Vec<String>,
-    expression: Expressions,
+    expression: Expression,
     value: String,
 }
 
@@ -152,8 +152,8 @@ impl fmt::Display for Filter {
 #[derive(Debug)]
 pub struct Validate {
     field: String,
-    format: Formats,
-    action: Actions,
+    format: Format,
+    action: Action,
 }
 
 impl Buildable for Validate {
@@ -183,7 +183,7 @@ impl fmt::Display for Validate {
 #[derive(Debug)]
 pub struct Coerce {
     fields: Vec<String>,
-    typed: Types,
+    typed: Type,
     rescue: String,
 }
 
@@ -214,7 +214,7 @@ impl fmt::Display for Coerce {
 #[derive(Debug)]
 pub struct Add {
     fields: Vec<String>,
-    typed: Types,
+    typed: Type,
     default: String,
 }
 
