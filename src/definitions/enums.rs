@@ -7,6 +7,7 @@ pub enum InputFormat {
 pub enum OutputFormat {
     CSV,
     JSON,
+    SQL,
 }
 
 #[derive(Debug)]
