@@ -1,19 +1,20 @@
 use std::fmt::Debug;
 use std::io::{BufRead, Write};
 
+use crate::definitions::enums::Type;
 use crate::definitions::traits::Executable;
 
 #[derive(Debug)]
 pub struct Field {
     pub name: String,
-    pub typed: String,
+    pub typed: Type,
 }
 
 impl Field {
-    pub fn new(name: &str, typed: &str) -> Self {
+    pub fn new(name: &str) -> Self {
         Field {
             name: name.to_string(),
-            typed: typed.to_string(),
+            typed: Type::STRING,
         }
     }
 }

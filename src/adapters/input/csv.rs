@@ -16,7 +16,7 @@ impl InputAdapter for Adapter {
             .headers()?
             .clone()
             .iter()
-            .map(|header| Field::new(header, "string"))
+            .map(|header| Field::new(header))
             .collect();
 
         let mut id: u64 = 0;

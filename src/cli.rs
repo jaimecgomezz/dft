@@ -117,6 +117,7 @@ impl Cli {
 
         match result.as_str() {
             "csv" => Ok(OutputFormat::CSV),
+            "json" => Ok(OutputFormat::JSON),
             _ => panic!("Invalid output format"),
         }
     }
