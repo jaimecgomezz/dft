@@ -2,8 +2,10 @@ use std::error::Error;
 use std::io::BufRead;
 use std::io::Write;
 
-use crate::adapters::csv::CsvAdapter;
-use crate::definitions::traits::Adapter;
+use crate::adapters::input;
+use crate::adapters::output;
+use crate::definitions::traits::FromAdapter;
+use crate::definitions::traits::ToAdapter;
 use crate::definitions::types::{
     Executables, Fields, InputFormat, Logs, OutputFormat, OutputWriter, Records,
 };
@@ -43,7 +45,7 @@ impl Process {
         format: InputFormat,
     ) -> Result<usize, Box<dyn Error>> {
         let adapter = match format {
-            InputFormat::CSV => CsvAdapter,
+            InputFormat::CSV => input::csv::Adapter,
         };
 
         let (mut fields, mut records) = adapter.read(reader)?;
@@ -80,7 +82,7 @@ impl Process {
         format: OutputFormat,
     ) -> Result<usize, Box<dyn Error>> {
         let adapter = match format {
-            OutputFormat::CSV => CsvAdapter,
+            OutputFormat::CSV => output::csv::Adapter,
         };
 
         Ok(adapter.write(writer, &self.fields, &self.records)?)

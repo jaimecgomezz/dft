@@ -3,9 +3,11 @@ use std::fmt;
 
 use crate::definitions::types::{Fields, InputReader, OutputWriter, Records};
 
-pub trait Adapter {
+pub trait FromAdapter {
     fn read(&self, reader: InputReader) -> Result<(Fields, Records), Box<dyn Error>>;
+}
 
+pub trait ToAdapter {
     fn write(
         &self,
         writer: OutputWriter,

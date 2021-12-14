@@ -1,14 +1,12 @@
-use csv::{Reader, Writer};
+use csv::Reader;
 use std::error::Error;
 
-use crate::definitions::traits::Adapter;
-use crate::definitions::types::{
-    Field, Fields, InputReader, OutputWriter, Record, Records, Values,
-};
+use crate::definitions::traits::FromAdapter;
+use crate::definitions::types::{Field, Fields, InputReader, Record, Records, Values};
 
-pub struct CsvAdapter;
+pub struct Adapter;
 
-impl Adapter for CsvAdapter {
+impl FromAdapter for Adapter {
     fn read(&self, reader: InputReader) -> Result<(Fields, Records), Box<dyn Error>> {
         let mut result: Records = vec![];
 
@@ -34,27 +32,5 @@ impl Adapter for CsvAdapter {
         }
 
         Ok((fields, result))
-    }
-
-    fn write(
-        &self,
-        writer: OutputWriter,
-        fields: &Fields,
-        records: &Records,
-    ) -> Result<usize, Box<dyn Error>> {
-        let mut written = 0;
-        let mut writer = Writer::from_writer(writer);
-
-        let headers: Vec<String> = fields.iter().map(|field| field.name.to_owned()).collect();
-
-        writer.write_record(headers.iter())?;
-
-        for record in records {
-            writer.write_record(record.values.iter())?;
-
-            written += 1;
-        }
-
-        Ok(written)
     }
 }
