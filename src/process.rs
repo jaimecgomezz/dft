@@ -66,7 +66,7 @@ impl Process {
         let mut logged = 0;
 
         for log in &self.logs {
-            write!(writer, "{}\n", log)?;
+            writeln!(writer, "{}", log)?;
 
             logged += 1;
         }

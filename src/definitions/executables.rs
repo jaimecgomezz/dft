@@ -1,8 +1,9 @@
-use std::fmt::Debug;
+use std::fmt;
 
 use crate::definitions::traits::Execute;
 use crate::instructions::utils::{parse_token, parse_token_list};
 
+#[derive(Debug)]
 pub struct Distinct {
     fields: Vec<String>,
 }
@@ -15,14 +16,15 @@ impl Distinct {
     }
 }
 
-impl Execute for Distinct {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("Distinct")
-            .field("fields", &self.fields)
-            .finish()
+impl Execute for Distinct {}
+
+impl fmt::Display for Distinct {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self)
     }
 }
 
+#[derive(Debug)]
 pub struct Ignore {
     fields: Vec<String>,
 }
@@ -35,14 +37,15 @@ impl Ignore {
     }
 }
 
-impl Execute for Ignore {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("Ignore")
-            .field("fields", &self.fields)
-            .finish()
+impl Execute for Ignore {}
+
+impl fmt::Display for Ignore {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self)
     }
 }
 
+#[derive(Debug)]
 pub struct Alias {
     to: String,
     field: String,
@@ -57,15 +60,15 @@ impl Alias {
     }
 }
 
-impl Execute for Alias {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("Alias")
-            .field("field", &self.field)
-            .field("to", &self.to)
-            .finish()
+impl Execute for Alias {}
+
+impl fmt::Display for Alias {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self)
     }
 }
 
+#[derive(Debug)]
 pub struct Rename {
     to: String,
     field: String,
@@ -80,15 +83,15 @@ impl Rename {
     }
 }
 
-impl Execute for Rename {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("Rename")
-            .field("field", &self.field)
-            .field("to", &self.to)
-            .finish()
+impl Execute for Rename {}
+
+impl fmt::Display for Rename {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self)
     }
 }
 
+#[derive(Debug)]
 pub struct Merge {
     to: String,
     fields: Vec<String>,
@@ -103,15 +106,15 @@ impl Merge {
     }
 }
 
-impl Execute for Merge {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("Merge")
-            .field("fields", &self.fields)
-            .field("to", &self.to)
-            .finish()
+impl Execute for Merge {}
+
+impl fmt::Display for Merge {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self)
     }
 }
 
+#[derive(Debug)]
 pub struct Filter {
     fields: Vec<String>,
     expression: String,
@@ -132,16 +135,15 @@ impl Filter {
     }
 }
 
-impl Execute for Filter {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("Filter")
-            .field("fields", &self.fields)
-            .field("expression", &self.expression)
-            .field("value", &self.value)
-            .finish()
+impl Execute for Filter {}
+
+impl fmt::Display for Filter {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self)
     }
 }
 
+#[derive(Debug)]
 pub struct Coerce {
     fields: Vec<String>,
     typed: String,
@@ -162,16 +164,15 @@ impl Coerce {
     }
 }
 
-impl Execute for Coerce {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("Coerce")
-            .field("fields", &self.fields)
-            .field("typed", &self.typed)
-            .field("rescue", &self.rescue)
-            .finish()
+impl Execute for Coerce {}
+
+impl fmt::Display for Coerce {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self)
     }
 }
 
+#[derive(Debug)]
 pub struct Add {
     fields: Vec<String>,
     typed: String,
@@ -192,18 +193,10 @@ impl Add {
     }
 }
 
-impl Execute for Add {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("Add")
-            .field("fields", &self.fields)
-            .field("typed", &self.typed)
-            .field("default", &self.default)
-            .finish()
-    }
-}
+impl Execute for Add {}
 
-impl Debug for dyn Execute {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.fmt(f)
+impl fmt::Display for Add {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self)
     }
 }

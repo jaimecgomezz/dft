@@ -1,4 +1,5 @@
 use std::error::Error;
+use std::fmt;
 
 use crate::definitions::types::{Fields, InputReader, OutputWriter, Records};
 
@@ -13,10 +14,8 @@ pub trait Adapter {
     ) -> Result<usize, Box<dyn Error>>;
 }
 
-pub trait Execute {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result;
-
+pub trait Execute: fmt::Display + fmt::Debug {
     fn execute(&self) -> Result<String, Box<dyn Error>> {
-        Ok(format!("Executing..."))
+        Ok(format!("Executing: {:?}", self))
     }
 }
