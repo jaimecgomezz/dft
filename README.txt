@@ -14,18 +14,24 @@ isn't working yet
 
 usage
 --------------------------------------------------------------------------------
-dft [FLAGS] [OPTIONS]
+data files transformer
+
+USAGE:
+    dft [FLAGS] [OPTIONS]
 
 FLAGS:
-    -h, --help       Prints help information
-    -u, --undo       Reverse evaluate
-    -V, --version    Prints version information
-    -v, --verbose    Verbose mode (-v, -vv, -vvv, ...)
+    -h, --help         Prints help information
+        --overwrite    Overwrite output
+    -u, --undo         Reverse evaluate?
+    -V, --version      Prints version information
+    -v, --verbose      Verbose mode (-v, -vv, -vvv, ...)
 
 OPTIONS:
+    -F, --format <format>                Input and output format, overwrites <from> and <to>
     -f, --from <from>                    Input format, see availables
-    -i, --input <input>                  Input file, defaults to stding
+    -i, --input <input>                  Input file, defaults to stdin
     -z, --instructions <instructions>    Instructions file [default: instructions.dft]
+    -l, --logger <logger>                Logger output, defaults to stdout
     -o, --output <output>                Output file, defaults to stdout
     -t, --to <to>                        Output format, see availables
 
