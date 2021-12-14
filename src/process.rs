@@ -6,7 +6,7 @@ use crate::adapters::input;
 use crate::adapters::output;
 use crate::definitions::enums::{InputFormat, OutputFormat};
 use crate::definitions::traits::{InputAdapter, OutputAdapter};
-use crate::definitions::types::{Fields, Instructions, Logs, OutputWriter, Records};
+use crate::definitions::types::{Fields, Instructions, Logs, Optionals, OutputWriter, Records};
 use crate::instructions::parser::InstructionParser;
 
 #[derive(Debug)]
@@ -76,12 +76,14 @@ impl Process {
         &self,
         writer: Box<dyn Write>,
         format: OutputFormat,
+        optionals: Optionals,
     ) -> Result<usize, Box<dyn Error>> {
         let adapter: Box<dyn OutputAdapter> = match format {
             OutputFormat::CSV => Box::new(output::csv::Adapter),
             OutputFormat::JSON => Box::new(output::json::Adapter),
+            OutputFormat::SQL => Box::new(output::sql::Adapter),
         };
 
-        Ok(adapter.write(writer, &self.fields, &self.records)?)
+        Ok(adapter.write(writer, &self.fields, &self.records, optionals)?)
     }
 }

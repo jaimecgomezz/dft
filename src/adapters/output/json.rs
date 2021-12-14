@@ -3,7 +3,7 @@ use std::error::Error;
 
 use crate::definitions::enums::Type;
 use crate::definitions::traits::OutputAdapter;
-use crate::definitions::types::{Fields, OutputWriter, Records};
+use crate::definitions::types::{Fields, Optionals, OutputWriter, Records};
 
 pub struct Adapter;
 
@@ -13,6 +13,7 @@ impl OutputAdapter for Adapter {
         mut writer: OutputWriter,
         fields: &Fields,
         records: &Records,
+        optionals: Optionals,
     ) -> Result<usize, Box<dyn Error>> {
         let mut writables = JsonValue::new_array();
 
@@ -49,7 +50,7 @@ impl OutputAdapter for Adapter {
             writables.push(writable)?;
         }
 
-        writables.write_pretty(&mut writer, 4)?;
+        writables.write_pretty(&mut writer, optionals.ispaces)?;
 
         Ok(writables.len())
     }

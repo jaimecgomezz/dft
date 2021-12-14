@@ -1,10 +1,12 @@
-use crate::definitions::enums::{InputFormat, OutputFormat};
 use std::env::current_dir;
 use std::error::Error;
 use std::fs::{File, OpenOptions};
 use std::io::{stdin, stdout, BufRead, BufReader, Write};
 use std::path::PathBuf;
 use structopt::StructOpt;
+
+use crate::definitions::enums::{InputFormat, OutputFormat};
+use crate::definitions::types::Optionals;
 
 #[derive(StructOpt, Debug)]
 #[structopt(name = "dft", about = "data files transformer")]
@@ -48,6 +50,16 @@ pub struct Cli {
     /// Input and output format, overwrites <from> and <to>
     #[structopt(short = "F", long)]
     pub format: Option<String>,
+
+    /// Table name. Only useful when output format is set to sql.
+    /// Defaults to table_name
+    #[structopt(long = "table-name")]
+    pub tname: Option<String>,
+
+    /// Json indentation spaces. Only useful when output is set to json.
+    /// Defaults to 4
+    #[structopt(long = "indent-spaces")]
+    pub ispaces: Option<u16>,
 }
 
 impl Cli {
@@ -118,6 +130,7 @@ impl Cli {
         match result.as_str() {
             "csv" => Ok(OutputFormat::CSV),
             "json" => Ok(OutputFormat::JSON),
+            "sql" => Ok(OutputFormat::SQL),
             _ => panic!("Invalid output format"),
         }
     }
@@ -170,6 +183,27 @@ impl Cli {
 
                 Ok(Box::new(file))
             }
+        }
+    }
+
+    pub fn optionals(&self) -> Optionals {
+        Optionals {
+            tname: self.tname(),
+            ispaces: self.ispaces(),
+        }
+    }
+
+    fn ispaces(&self) -> u16 {
+        match &self.ispaces {
+            Some(spaces) => spaces.to_owned(),
+            None => 4,
+        }
+    }
+
+    fn tname(&self) -> String {
+        match &self.tname {
+            Some(name) => name.to_owned(),
+            None => "table_name".to_string(),
         }
     }
 }

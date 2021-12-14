@@ -18,7 +18,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     process.read_records(cli.reader()?, cli.iformat()?)?;
     process.run()?;
     process.log(cli.logger()?)?;
-    process.write_result(cli.writer()?, cli.oformat()?)?;
+    process.write_result(cli.writer()?, cli.oformat()?, cli.optionals())?;
 
     Ok(())
 }

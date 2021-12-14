@@ -47,3 +47,8 @@ pub type Logs = Vec<String>;
 
 pub type OutputWriter = Box<dyn Write>;
 pub type InputReader = Box<dyn BufRead>;
+
+pub struct Optionals {
+    pub tname: String,
+    pub ispaces: u16,
+}
