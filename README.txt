@@ -22,7 +22,7 @@ USAGE:
 FLAGS:
     -h, --help         Prints help information
         --overwrite    Overwrite output
-    -u, --undo         Reverse evaluate?
+        --undo         Reverse evaluate instructions
     -V, --version      Prints version information
     -v, --verbose      Verbose mode (-v, -vv, -vvv, ...)
 
@@ -31,8 +31,10 @@ OPTIONS:
     -f, --from <from>                    Input format, see availables
     -i, --input <input>                  Input file, defaults to stdin
     -z, --instructions <instructions>    Instructions file [default: instructions.dft]
+        --indent-spaces <ispaces>        Only useful when output is set to json [default: 4]
     -l, --logger <logger>                Logger output, defaults to stdout
     -o, --output <output>                Output file, defaults to stdout
+        --table-name <tname>             Only useful when output format is set to sql [default: table_name]
     -t, --to <to>                        Output format, see availables
 
 

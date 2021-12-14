@@ -11,8 +11,8 @@ use crate::definitions::types::Optionals;
 #[derive(StructOpt, Debug)]
 #[structopt(name = "dft", about = "data files transformer")]
 pub struct Cli {
-    /// Reverse evaluate?
-    #[structopt(short, long)]
+    /// Reverse evaluate instructions
+    #[structopt(long)]
     pub undo: bool,
 
     /// Overwrite output
@@ -51,15 +51,13 @@ pub struct Cli {
     #[structopt(short = "F", long)]
     pub format: Option<String>,
 
-    /// Table name. Only useful when output format is set to sql.
-    /// Defaults to table_name
-    #[structopt(long = "table-name")]
-    pub tname: Option<String>,
+    /// Only useful when output format is set to sql
+    #[structopt(long = "table-name", default_value = "table_name")]
+    pub tname: String,
 
-    /// Json indentation spaces. Only useful when output is set to json.
-    /// Defaults to 4
-    #[structopt(long = "indent-spaces")]
-    pub ispaces: Option<u16>,
+    /// Only useful when output is set to json
+    #[structopt(long = "indent-spaces", default_value = "4")]
+    pub ispaces: u16,
 }
 
 impl Cli {
@@ -188,22 +186,8 @@ impl Cli {
 
     pub fn optionals(&self) -> Optionals {
         Optionals {
-            tname: self.tname(),
-            ispaces: self.ispaces(),
-        }
-    }
-
-    fn ispaces(&self) -> u16 {
-        match &self.ispaces {
-            Some(spaces) => spaces.to_owned(),
-            None => 4,
-        }
-    }
-
-    fn tname(&self) -> String {
-        match &self.tname {
-            Some(name) => name.to_owned(),
-            None => "table_name".to_string(),
+            ispaces: self.ispaces,
+            tname: self.tname.to_string(),
         }
     }
 }
