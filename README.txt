@@ -1,6 +1,6 @@
 dft
 --------------------------------------------------------------------------------
-data files transformer cli built with rust
+data files transformer cli
 
 
 notice
@@ -12,9 +12,9 @@ isn't working yet
   - the developer
 
 
-usage
+help
 --------------------------------------------------------------------------------
-data files transformer
+data files transformer cli
 
 USAGE:
     dft [FLAGS] [OPTIONS]
