@@ -1,12 +1,24 @@
+mod adapters;
 mod cli;
+mod definitions;
 mod instructions;
+mod process;
 
 use cli::Cli;
-use instructions::InstructionParser;
+use process::Process;
 
-fn main() {
-    println!(
-        "{:#?}",
-        InstructionParser::from_instructor(Cli::args().instructor())
-    );
+use std::error::Error;
+
+fn main() -> Result<(), Box<dyn Error>> {
+    let cli = Cli::args();
+    let mut process = Process::new();
+
+    // TODO: error handling
+    process.read_executables(cli.instructor()?)?;
+    process.read_records(cli.reader()?, cli.iformat()?)?;
+    process.run()?;
+    process.log(cli.logger()?)?;
+    process.write_result(cli.writer()?, cli.oformat()?)?;
+
+    Ok(())
 }
