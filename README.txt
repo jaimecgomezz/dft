@@ -38,6 +38,9 @@ OPTIONS:
 
 concepts
 --------------------------------------------------------------------------------
+record:
+  an element in the data collection
+
 value:
   plain value
 
@@ -52,25 +55,33 @@ op:
 
 expression:
   comparison operation
-    - EQUALS
-    - GREATER
-    - EQGREATER
-    - LESSER
-    - EQLESSER
-    - DIFFERS
+    - equals
+    - greater
+    - eqgreater
+    - lesser
+    - eqlesser
+    - differs
 
 type:
   attribute data type
-    - integer
-    - float
+    - number
     - boolean
     - string
-      | date
-      | time
-      | datetime
-      | uri
-      | email
-      | uuid
+
+formats:
+  string value format
+    - date
+    - time
+    - datetime
+    - uri
+    - email
+    - uuid
+
+actions:
+  reaction to an event
+    - discard
+    - notify
+    - halt
 
 
 syntax
@@ -80,7 +91,8 @@ IGNORE    <field[,field...]>
 ALIAS     <field>               TO        <field>
 RENAME    <field>               TO        <field>
 MERGE     <field[,field...]>    TO        <field>
-FILTER    <field[,field...]>    THAT      <expression>    <value>
+FILTER    <field[,field...]>    MATCHING  <expression>    <value>
+VALIDATE  <field>               MATCHING  <format>        OR        <action>
 COERCE    <field[,field...]>    TYPED     <type>          RESCUE    <value>
 ADD       <field[,field...]>    TYPED     <type>          DEFAULT   <value>
 
@@ -94,15 +106,21 @@ IGNORE:
   filters out the <field> itself
   this operation makes the result undoable
 
-FILTER:
-  filters out records that fail to match its value against <value>
-
 ALIAS:
   aliases a given <field> to also be refered as <field>, useful in conjuction
   with APPLY
 
 RENAME:
   changes the current <field> name to <field>
+
+MERGE:
+  merges <fields> into <field>
+
+FILTER:
+  filters out records that fail to match its value against <value>
+
+VALIDATE:
+  validates that <field> conforms to <format> and execs <action> on failure
 
 COERCE:
   parses <field> into the specified <type> and rescues failure with <value>
