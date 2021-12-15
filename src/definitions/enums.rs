@@ -234,3 +234,41 @@ impl FromStr for Connector {
         }
     }
 }
+
+#[derive(Debug)]
+pub enum Instruction {
+    ADD(Vec<String>),
+    ALIAS(Vec<String>),
+    MERGE(Vec<String>),
+    IGNORE(Vec<String>),
+    COERCE(Vec<String>),
+    RENAME(Vec<String>),
+    FILTER(Vec<String>),
+    DISTINCT(Vec<String>),
+    VALIDATE(Vec<String>),
+}
+
+impl FromStr for Instruction {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut tokens: Vec<String> = s.split(" ").map(|s| s.to_owned()).collect();
+
+        if tokens.is_empty() {
+            return Err(s.to_string());
+        }
+
+        match tokens.remove(0).as_str() {
+            "ADD" => Ok(Instruction::ADD(tokens)),
+            "ALIAS" => Ok(Instruction::ALIAS(tokens)),
+            "MERGE" => Ok(Instruction::MERGE(tokens)),
+            "IGNORE" => Ok(Instruction::IGNORE(tokens)),
+            "COERCE" => Ok(Instruction::COERCE(tokens)),
+            "RENAME" => Ok(Instruction::RENAME(tokens)),
+            "FILTER" => Ok(Instruction::FILTER(tokens)),
+            "DISTINCT" => Ok(Instruction::DISTINCT(tokens)),
+            "VALIDATE" => Ok(Instruction::VALIDATE(tokens)),
+            _ => Err(s.to_string()),
+        }
+    }
+}
