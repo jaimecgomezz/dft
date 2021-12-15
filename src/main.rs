@@ -1,8 +1,8 @@
 mod adapters;
 mod cli;
 mod definitions;
-mod instructions;
 mod process;
+mod utils;
 
 use cli::Cli;
 use process::Process;
