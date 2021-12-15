@@ -1,7 +1,8 @@
 use std::fmt::Display;
 use std::str::FromStr;
 
-use super::traits::Tokenizable;
+use super::traits::{Executable, Tokenizable};
+use crate::definitions::executables::*;
 
 #[derive(Debug)]
 pub enum InputFormat {
@@ -237,6 +238,32 @@ impl FromStr for Connector {
     }
 }
 
+pub enum Token {
+    TYPE,
+    FIELD,
+    VALUE,
+    FIELDS,
+    FORMAT,
+    ACTION,
+    CONNECTOR,
+    EXPRESSION,
+}
+
+impl Display for Token {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Token::TYPE => write!(f, "<type>"),
+            Token::FIELD => write!(f, "<field>"),
+            Token::VALUE => write!(f, "<value>"),
+            Token::FIELDS => write!(f, "<fields>"),
+            Token::FORMAT => write!(f, "<format>"),
+            Token::ACTION => write!(f, "<action>"),
+            Token::CONNECTOR => write!(f, "<connector>"),
+            Token::EXPRESSION => write!(f, "<expression>"),
+        }
+    }
+}
+
 #[derive(Debug)]
 pub enum Instruction {
     ADD(String),
@@ -248,6 +275,22 @@ pub enum Instruction {
     FILTER(String),
     DISTINCT(String),
     VALIDATE(String),
+}
+
+impl Instruction {
+    pub fn build(&self) -> Result<Box<dyn Executable>, String> {
+        match self {
+            Instruction::ADD(rest) => Ok(Box::new(Add::from_str(&rest)?)),
+            Instruction::ALIAS(rest) => Ok(Box::new(Alias::from_str(&rest)?)),
+            Instruction::MERGE(rest) => Ok(Box::new(Merge::from_str(&rest)?)),
+            Instruction::IGNORE(rest) => Ok(Box::new(Ignore::from_str(&rest)?)),
+            Instruction::COERCE(rest) => Ok(Box::new(Coerce::from_str(&rest)?)),
+            Instruction::RENAME(rest) => Ok(Box::new(Rename::from_str(&rest)?)),
+            Instruction::FILTER(rest) => Ok(Box::new(Filter::from_str(&rest)?)),
+            Instruction::DISTINCT(rest) => Ok(Box::new(Distinct::from_str(&rest)?)),
+            Instruction::VALIDATE(rest) => Ok(Box::new(Validate::from_str(&rest)?)),
+        }
+    }
 }
 
 impl FromStr for Instruction {
@@ -274,32 +317,6 @@ impl FromStr for Instruction {
             "DISTINCT" => Ok(Instruction::DISTINCT(rest)),
             "VALIDATE" => Ok(Instruction::VALIDATE(rest)),
             _ => Err(instruction.to_string()),
-        }
-    }
-}
-
-pub enum Token {
-    TYPE,
-    FIELD,
-    VALUE,
-    FIELDS,
-    FORMAT,
-    ACTION,
-    CONNECTOR,
-    EXPRESSION,
-}
-
-impl Display for Token {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Token::TYPE => write!(f, "<type>"),
-            Token::FIELD => write!(f, "<field>"),
-            Token::VALUE => write!(f, "<value>"),
-            Token::FIELDS => write!(f, "<fields>"),
-            Token::FORMAT => write!(f, "<format>"),
-            Token::ACTION => write!(f, "<action>"),
-            Token::CONNECTOR => write!(f, "<connector>"),
-            Token::EXPRESSION => write!(f, "<expression>"),
         }
     }
 }
