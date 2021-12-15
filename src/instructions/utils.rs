@@ -5,7 +5,8 @@ use crate::definitions::enums::{Action, Connector, Expression, Format, Type};
 pub fn parse_typed(slice: Option<&&str>, line: &usize) -> Result<Type, Box<dyn Error>> {
     match slice {
         Some(s) => match *s {
-            "number" => Ok(Type::NUMBER),
+            "float" => Ok(Type::FLOAT),
+            "integer" => Ok(Type::INTEGER),
             "boolean" => Ok(Type::BOOLEAN),
             "string" => Ok(Type::STRING),
             _ => panic!("Invalid <type> on line {}", line),

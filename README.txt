@@ -57,33 +57,33 @@ op:
 
 expression:
   comparison operation
-    - equals
-    - greater
-    - eqgreater
-    - lesser
-    - eqlesser
-    - differs
+    - EQUALS
+    - GREATER
+    - EQGREATER
+    - LESSER
+    - EQLESSER
+    - DIFFERS
 
 type:
   attribute data type
-    - number
-    - boolean
-    - string
+    - NUMBER
+    - BOOLEAN
+    - STRING
 
 format:
   string value format
-    - date
-    - time
-    - datetime
-    - uri
-    - email
-    - uuid
+    - DATE
+    - TIME
+    - DATETIME
+    - URI
+    - EMAIL
+    - UUID
 
 action:
   reaction to an event
-    - discard
-    - notify
-    - halt
+    - DISCARD
+    - NOTIFY
+    - HALT
 
 
 syntax

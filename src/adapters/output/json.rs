@@ -27,10 +27,17 @@ impl OutputAdapter for Adapter {
             for (field, value) in fields.iter().zip(record.values.iter()) {
                 let value = match field.typed {
                     Type::STRING => JsonValue::from(value.to_string()),
-                    Type::NUMBER => match value.parse::<f64>() {
+                    Type::INTEGER => match value.parse::<isize>() {
                         Ok(parsed) => JsonValue::from(parsed),
                         Err(_) => panic!(
-                            "Invalid number value for {} in record {}",
+                            "Invalid integer value for {} in record {}",
+                            field.name, record.id
+                        ),
+                    },
+                    Type::FLOAT => match value.parse::<f64>() {
+                        Ok(parsed) => JsonValue::from(parsed),
+                        Err(_) => panic!(
+                            "Invalid float value for {} in record {}",
                             field.name, record.id
                         ),
                     },
