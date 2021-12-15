@@ -1,6 +1,8 @@
 use std::fmt::Display;
 use std::str::FromStr;
 
+use super::traits::Tokenizable;
+
 #[derive(Debug)]
 pub enum InputFormat {
     CSV,
@@ -237,38 +239,67 @@ impl FromStr for Connector {
 
 #[derive(Debug)]
 pub enum Instruction {
-    ADD(Vec<String>),
-    ALIAS(Vec<String>),
-    MERGE(Vec<String>),
-    IGNORE(Vec<String>),
-    COERCE(Vec<String>),
-    RENAME(Vec<String>),
-    FILTER(Vec<String>),
-    DISTINCT(Vec<String>),
-    VALIDATE(Vec<String>),
+    ADD(String),
+    ALIAS(String),
+    MERGE(String),
+    IGNORE(String),
+    COERCE(String),
+    RENAME(String),
+    FILTER(String),
+    DISTINCT(String),
+    VALIDATE(String),
 }
 
 impl FromStr for Instruction {
     type Err = String;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut tokens: Vec<String> = s.split(" ").map(|s| s.to_owned()).collect();
+        let mut tokens = s.tokenize_str(" ");
 
         if tokens.is_empty() {
             return Err(s.to_string());
         }
 
-        match tokens.remove(0).as_str() {
-            "ADD" => Ok(Instruction::ADD(tokens)),
-            "ALIAS" => Ok(Instruction::ALIAS(tokens)),
-            "MERGE" => Ok(Instruction::MERGE(tokens)),
-            "IGNORE" => Ok(Instruction::IGNORE(tokens)),
-            "COERCE" => Ok(Instruction::COERCE(tokens)),
-            "RENAME" => Ok(Instruction::RENAME(tokens)),
-            "FILTER" => Ok(Instruction::FILTER(tokens)),
-            "DISTINCT" => Ok(Instruction::DISTINCT(tokens)),
-            "VALIDATE" => Ok(Instruction::VALIDATE(tokens)),
-            _ => Err(s.to_string()),
+        let instruction = tokens.remove(0);
+        let rest = tokens.join(" ");
+
+        match instruction {
+            "ADD" => Ok(Instruction::ADD(rest)),
+            "ALIAS" => Ok(Instruction::ALIAS(rest)),
+            "MERGE" => Ok(Instruction::MERGE(rest)),
+            "IGNORE" => Ok(Instruction::IGNORE(rest)),
+            "COERCE" => Ok(Instruction::COERCE(rest)),
+            "RENAME" => Ok(Instruction::RENAME(rest)),
+            "FILTER" => Ok(Instruction::FILTER(rest)),
+            "DISTINCT" => Ok(Instruction::DISTINCT(rest)),
+            "VALIDATE" => Ok(Instruction::VALIDATE(rest)),
+            _ => Err(instruction.to_string()),
+        }
+    }
+}
+
+pub enum Token {
+    TYPE,
+    FIELD,
+    VALUE,
+    FIELDS,
+    FORMAT,
+    ACTION,
+    CONNECTOR,
+    EXPRESSION,
+}
+
+impl Display for Token {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Token::TYPE => write!(f, "<type>"),
+            Token::FIELD => write!(f, "<field>"),
+            Token::VALUE => write!(f, "<value>"),
+            Token::FIELDS => write!(f, "<fields>"),
+            Token::FORMAT => write!(f, "<format>"),
+            Token::ACTION => write!(f, "<action>"),
+            Token::CONNECTOR => write!(f, "<connector>"),
+            Token::EXPRESSION => write!(f, "<expression>"),
         }
     }
 }
