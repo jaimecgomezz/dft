@@ -1,5 +1,9 @@
 use std::fmt;
 
+pub fn flineerror(file: &str, line: usize, error: String) -> String {
+    format!("[{}] Error on line {}: {}", file, line, error)
+}
+
 pub fn fmissing(expected: impl fmt::Display) -> String {
     format!("Missing '{}'", expected)
 }

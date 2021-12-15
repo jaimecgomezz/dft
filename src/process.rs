@@ -1,17 +1,13 @@
 use std::error::Error;
-use std::io::BufRead;
-use std::io::Write;
+use std::io::{BufRead, Write};
 use std::str::FromStr;
 
-use crate::adapters::input;
-use crate::adapters::output;
-use crate::definitions::enums::Instruction;
-use crate::definitions::enums::{InputFormat, OutputFormat};
-use crate::definitions::executables::*;
+use crate::adapters::{input, output};
+use crate::definitions::enums::{InputFormat, Instruction, OutputFormat};
 use crate::definitions::structs::Optionals;
-use crate::definitions::traits::Executable;
-use crate::definitions::traits::{InputAdapter, OutputAdapter};
+use crate::definitions::traits::{Executable, InputAdapter, OutputAdapter};
 use crate::definitions::types::{Fields, Instructions, Logs, OutputWriter, Records};
+use crate::utils::flineerror;
 
 #[derive(Debug)]
 pub struct Process {
@@ -31,28 +27,20 @@ impl Process {
         }
     }
 
-    pub fn read_instructions(&mut self, reader: Box<dyn BufRead>) -> Result<usize, Box<dyn Error>> {
-        for (_nline, rline) in reader.lines().enumerate() {
-            let line = rline?;
+    pub fn read_instructions(&mut self, reader: Box<dyn BufRead>) -> Result<usize, String> {
+        for (nline, rline) in reader.lines().enumerate() {
+            let executable: Result<Box<dyn Executable>, String> = match rline {
+                Ok(line) => match Instruction::from_str(line.as_ref()) {
+                    Ok(instruction) => match instruction.build() {
+                        Ok(built) => Ok(built),
+                        Err(e) => Err(flineerror("Instructions", nline, e)),
+                    },
+                    Err(e) => Err(flineerror("Instructions", nline, e)),
+                },
+                Err(e) => Err(flineerror("Instructions", nline, e.to_string())),
+            };
 
-            match Instruction::from_str(line.as_str()) {
-                Ok(instruction) => {
-                    let built: Box<dyn Executable> = match instruction {
-                        Instruction::ADD(rest) => Box::new(Add::from_str(&rest)?),
-                        Instruction::ALIAS(rest) => Box::new(Alias::from_str(&rest)?),
-                        Instruction::MERGE(rest) => Box::new(Merge::from_str(&rest)?),
-                        Instruction::IGNORE(rest) => Box::new(Ignore::from_str(&rest)?),
-                        Instruction::COERCE(rest) => Box::new(Coerce::from_str(&rest)?),
-                        Instruction::RENAME(rest) => Box::new(Rename::from_str(&rest)?),
-                        Instruction::FILTER(rest) => Box::new(Filter::from_str(&rest)?),
-                        Instruction::DISTINCT(rest) => Box::new(Distinct::from_str(&rest)?),
-                        Instruction::VALIDATE(rest) => Box::new(Validate::from_str(&rest)?),
-                    };
-
-                    self.instructions.push(built);
-                }
-                Err(e) => panic!("Invalid <instruction>, found: {}", e),
-            }
+            self.instructions.push(executable?);
         }
 
         Ok(self.instructions.len())
