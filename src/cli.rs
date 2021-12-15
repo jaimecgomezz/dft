@@ -7,6 +7,7 @@ use structopt::StructOpt;
 
 use crate::definitions::enums::{InputFormat, OutputFormat};
 use crate::definitions::structs::Optionals;
+use crate::definitions::traits::Tokenizable;
 
 #[derive(StructOpt, Debug)]
 #[structopt(name = "dft", about = "data files transformer")]
@@ -76,7 +77,7 @@ impl Cli {
                     Some(path) => match path.file_name() {
                         Some(filename) => match filename.to_str() {
                             Some(fstr) => {
-                                let components: Vec<&str> = fstr.split(".").collect();
+                                let components = fstr.tokenize_str(".");
 
                                 match components.last() {
                                     Some(extension) => extension.to_string(),
@@ -109,7 +110,7 @@ impl Cli {
                     Some(path) => match path.file_name() {
                         Some(filename) => match filename.to_str() {
                             Some(fstr) => {
-                                let components: Vec<&str> = fstr.split(".").collect();
+                                let components = fstr.tokenize_str(".");
 
                                 match components.last() {
                                     Some(extension) => extension.to_string(),
