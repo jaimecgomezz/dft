@@ -1,7 +1,8 @@
 use std::error::Error;
 use std::fmt;
 
-use crate::definitions::types::{Fields, InputReader, Optionals, OutputWriter, Records};
+use crate::definitions::structs::Optionals;
+use crate::definitions::types::{Fields, InputReader, OutputWriter, Records};
 
 pub trait InputAdapter {
     fn read(&self, reader: InputReader) -> Result<(Fields, Records), Box<dyn Error>>;

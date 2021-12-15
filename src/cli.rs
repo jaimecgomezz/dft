@@ -6,7 +6,7 @@ use std::path::PathBuf;
 use structopt::StructOpt;
 
 use crate::definitions::enums::{InputFormat, OutputFormat};
-use crate::definitions::types::Optionals;
+use crate::definitions::structs::Optionals;
 
 #[derive(StructOpt, Debug)]
 #[structopt(name = "dft", about = "data files transformer")]

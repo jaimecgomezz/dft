@@ -5,8 +5,9 @@ use std::io::Write;
 use crate::adapters::input;
 use crate::adapters::output;
 use crate::definitions::enums::{InputFormat, OutputFormat};
+use crate::definitions::structs::Optionals;
 use crate::definitions::traits::{InputAdapter, OutputAdapter};
-use crate::definitions::types::{Fields, Instructions, Logs, Optionals, OutputWriter, Records};
+use crate::definitions::types::{Fields, Instructions, Logs, OutputWriter, Records};
 use crate::instructions::parser::InstructionParser;
 
 #[derive(Debug)]

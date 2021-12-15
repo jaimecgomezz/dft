@@ -1,8 +1,9 @@
 use std::error::Error;
 
 use crate::definitions::enums::Type;
+use crate::definitions::structs::Optionals;
 use crate::definitions::traits::OutputAdapter;
-use crate::definitions::types::{Fields, Optionals, OutputWriter, Records};
+use crate::definitions::types::{Fields, OutputWriter, Records};
 
 pub struct Adapter;
 
