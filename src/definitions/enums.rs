@@ -266,6 +266,7 @@ impl Display for Token {
 
 #[derive(Debug)]
 pub enum Instruction {
+    SET(String),
     ADD(String),
     ALIAS(String),
     MERGE(String),
@@ -280,6 +281,7 @@ pub enum Instruction {
 impl Instruction {
     pub fn build(&self) -> Result<Box<dyn Executable>, String> {
         match self {
+            Instruction::SET(rest) => Ok(Box::new(Set::from_str(&rest)?)),
             Instruction::ADD(rest) => Ok(Box::new(Add::from_str(&rest)?)),
             Instruction::ALIAS(rest) => Ok(Box::new(Alias::from_str(&rest)?)),
             Instruction::MERGE(rest) => Ok(Box::new(Merge::from_str(&rest)?)),
@@ -307,6 +309,7 @@ impl FromStr for Instruction {
         let rest = tokens.join(" ");
 
         match instruction {
+            "SET" => Ok(Instruction::SET(rest)),
             "ADD" => Ok(Instruction::ADD(rest)),
             "ALIAS" => Ok(Instruction::ALIAS(rest)),
             "MERGE" => Ok(Instruction::MERGE(rest)),

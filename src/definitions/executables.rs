@@ -185,6 +185,49 @@ impl fmt::Display for Merge {
 
 #[derive(Debug)]
 #[allow(dead_code)]
+pub struct Set {
+    typed: String,
+    fields: Vec<String>,
+}
+
+impl str::FromStr for Set {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let tokens = s.tokenize_str(" ");
+
+        match tokens.get(0) {
+            Some(fields) => match tokens.get(1) {
+                Some(connector) => match Connector::from_str(&connector) {
+                    Ok(_) => match tokens.get(2) {
+                        Some(t) => match Type::from_str(t) {
+                            Ok(typed) => Ok(Set {
+                                typed: typed.to_string(),
+                                fields: fields.tokenize_string(","),
+                            }),
+                            Err(e) => Err(finvalid(Token::TYPE, e)),
+                        },
+                        None => Err(fmissing(Token::FIELDS)),
+                    },
+                    Err(e) => Err(finvalidkind(Token::CONNECTOR, Connector::TYPED, e)),
+                },
+                None => Err(fmissing(Connector::TYPED)),
+            },
+            None => Err(fmissing(Token::FIELDS)),
+        }
+    }
+}
+
+impl Executable for Set {}
+
+impl fmt::Display for Set {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self)
+    }
+}
+
+#[derive(Debug)]
+#[allow(dead_code)]
 pub struct Filter {
     fields: Vec<String>,
     expression: Expression,

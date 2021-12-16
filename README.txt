@@ -93,6 +93,7 @@ IGNORE    <field[,field...]>
 ALIAS     <field>               TO        <field>
 RENAME    <field>               TO        <field>
 MERGE     <field[,field...]>    TO        <field>
+SET       <field[,field...]>    TYPED     <type>
 FILTER    <field[,field...]>    MATCHING  <expression>    <value>
 VALIDATE  <field>               MATCHING  <format>        OR        <action>
 COERCE    <field[,field...]>    TYPED     <type>          RESCUE    <value>
@@ -117,6 +118,9 @@ RENAME:
 
 MERGE:
   merges <fields> into <field>
+
+SET:
+  assings <fields> to by <type>
 
 FILTER:
   filters out records that fail to match its value against <value>
